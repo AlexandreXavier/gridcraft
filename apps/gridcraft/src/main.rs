@@ -16,6 +16,8 @@ mod control_server;
 mod graphics;
 mod logging;
 #[cfg(target_os = "macos")]
+mod metal_graphics;
+#[cfg(target_os = "macos")]
 mod native_menu;
 mod print;
 
@@ -364,6 +366,10 @@ fn main() -> eframe::Result<()> {
     };
     #[cfg(target_os = "windows")]
     let retry_options = options.clone();
+    #[cfg(target_os = "macos")]
+    let mut options = options;
+    #[cfg(target_os = "macos")]
+    metal_graphics::without_indirect_validation(&mut options);
     // Registered before the event loop starts, so it catches the Finder event that launched us as
     // well as later ones. Lives until the event loop returns; the app creator only borrows it.
     #[cfg(target_os = "macos")]
