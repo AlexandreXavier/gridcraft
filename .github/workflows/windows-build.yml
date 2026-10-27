@@ -1,0 +1,27 @@
+name: Windows build
+
+# On-demand x64 build of the GUI and CLI for Windows. Uploads the two executables as a workflow
+# artifact; it does not sign, package or publish anything.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows-x64:
+    runs-on: windows-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Build release binaries
+        run: cargo build --release --locked -p gridcraft -p gridcraft-cli
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gridcraft-windows-x64
+          path: |
+            target/release/gridcraft.exe
+            target/release/gridcraft-cli.exe
+          if-no-files-found: error
